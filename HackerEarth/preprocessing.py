@@ -1,6 +1,6 @@
 import csv
 import os
-from shutil import copy2
+from shutil import copy2,move
 
 label_file = "C:\\Users\\yashc\\Downloads\\hackerearth\\meta-data\\train.csv"
 output_train_dir = "C:\\Users\\yashc\\Downloads\\hackerearth\\output-train"
@@ -23,18 +23,27 @@ def make_label_files(dir=output_train_dir,copy=True):
     print ("done")
 
 def split_training_data():
-    sub_dir_val = {}
-    sub_dir_split = {}
     for subdirs,dirs,files in os.walk(output_train_dir):
-        for name in files:
-            if subdirs in sub_dir_val:
-                sub_dir_val[subdirs] += 1
-            else:
-                sub_dir_val[subdirs] = 1
-    for key in sub_dir_val:
-        sub_dir_split[key] = int(sub_dir_val[key] * 0.75)
-
-    
+        for name in dirs:
+            newPath = output_test_dir + "//" + name
+            c=0
+            #print(output_train_dir + "//" + name)
+            for subdirs,dirs,files in os.walk(output_train_dir + "//" + name):
+                for filename in files:
+                    c+=1
+            print(c)
+            c = int(c*0.25)
+            cur = 0
+            for subdirs,dirs,files in os.walk(output_train_dir + "//" + name):
+                for filename in files:
+                    if cur != c:
+                        temp = 1
+                        move(os.path.join(subdirs,filename),newPath)
+                        #print("moving-> " + os.path.join(subdirs,filename) + " -> " + newPath)
+                        cur += 1
+                    else:
+                        break
+            #print("moved -> " + str(cur))
 
 
 if __name__ == '__main__':
